@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Developing Data Products Course Project</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Developing Data Products Course Project">
+  <meta name="author" content="Tony Dreher">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/quiz/css/demo.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Developing Data Products Course Project</h1>
+    <h2>Predicting MPG</h2>
+    <p>Tony Dreher<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Data &amp; Purpose</h2>
+  </hgroup>
+  <article data-timings="">
+    <ul>
+<li><p>This Shiny app uses the <code>mtcars</code> dataset from the dataset library</p></li>
+<li><p>Its purpose is to predict the gas mileage of a vehicle based on the user&#39;s inputs.</p></li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Linear Regression Model</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The app predicts by using a parsimonious linear regression model.  Having already discovered that the wt, qsec, and am variables are the most significant in predicting mpg through the use of a all variable model followed by a step algorithm.  </p>
+
+<pre><code class="r">allvariablemodel &lt;- lm(mpg ~ ., data = mtcars)
+bestmodel &lt;- step(allvariablemodel, direction = &quot;both&quot;)
+parsedmodel &lt;- lm(mpg ~ wt + qsec + am, data = mtcars)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>UI Side</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The user is able to use sliders to choose a weight, quarter mile time, and transmission type.  </p>
+
+<p>The minimums and maximums of the variables from the mtcars dataset were used to keep the user&#39;s choices within somewhat realistic ranges.</p>
+
+<p>For example:</p>
+
+<pre><code class="r">wtmin &lt;- round(min(mtcars$wt),1)
+wtmax &lt;- round(max(mtcars$wt),1)
+wtmean &lt;- round(mean(mtcars$wt),1)
+
+sliderInput(&quot;weight&quot;,label = &quot;Weight (1000 lbs)&quot;,min = wtmin,max = wtmax,
+                value = wtmean),
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Server Side</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The user&#39;s inputs are used as new data in the predict function&#39;s ability to derive confidence intervals. The second and third element - the lower and upper bound of the confidence interval - are then pasted into the text output.</p>
+
+<pre><code class="r">mpgPredict &lt;- predict(parsedmodel,
+        newdata = data.frame(wt=input$weight,qsec=input$qsec,
+        am=as.integer(input$transmission)),interval = &quot;confidence&quot;)
+
+
+paste(&quot;Your predicted MPG is between&quot;, round(mpgPredict[2],digits = 2),
+          &quot;and&quot;,round(mpgPredict[3],digits = 2))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Data &amp; Purpose'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Linear Regression Model'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='UI Side'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Server Side'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  <script src="libraries/widgets/quiz/js/jquery.quiz.js"></script>
+<script src="libraries/widgets/quiz/js/mustache.min.js"></script>
+<script src="libraries/widgets/quiz/js/quiz-app.js"></script>
+
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
